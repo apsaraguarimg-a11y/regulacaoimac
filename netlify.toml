@@ -2,14 +2,32 @@
   publish = "."
   command = "echo 'No build required'"
 
+# Redirecionar todas as rotas para index.html (SPA)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
   force = false
 
+# Headers para PDFs
 [[headers]]
   for = "/*.pdf"
   [headers.values]
     Content-Type = "application/pdf"
-    Content-Disposition = "attachment"
+    Content-Disposition = "inline"
+    Cache-Control = "public, max-age=31536000"
+
+# Headers para arquivos estáticos
+[[headers]]
+  for = "/sistema/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000"
+
+# Headers de segurança
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
