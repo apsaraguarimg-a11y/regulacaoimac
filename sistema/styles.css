@@ -5,6 +5,10 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     --primary: #1a5276;
     --primary-light: #2980b9;
@@ -32,6 +36,7 @@ body {
     color: var(--text);
     line-height: 1.6;
     min-height: 100vh;
+    overflow-x: hidden;
 }
 
 .container {
@@ -135,7 +140,7 @@ body {
     border-radius: 50px;
     font-size: 1rem;
     font-family: inherit;
-    transition: var(--transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     background: var(--bg);
 }
 
@@ -144,6 +149,16 @@ body {
     border-color: var(--primary-light);
     background: white;
     box-shadow: 0 0 0 4px rgba(41,128,185,0.1);
+    transform: translateY(-2px);
+}
+
+.search-box input::placeholder {
+    color: var(--text-light);
+    transition: opacity 0.3s ease;
+}
+
+.search-box input:focus::placeholder {
+    opacity: 0.6;
 }
 
 .search-icon {
@@ -255,8 +270,8 @@ body {
 /* ===== PROTOCOLS GRID ===== */
 .protocols-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
 }
 
 /* ===== PROTOCOL CARD ===== */
@@ -265,11 +280,12 @@ body {
     border-radius: var(--radius);
     border: 1px solid var(--border);
     padding: 24px;
-    transition: var(--transition);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
     position: relative;
     overflow: hidden;
+    cursor: pointer;
 }
 
 .protocol-card::before {
@@ -280,6 +296,20 @@ body {
     right: 0;
     height: 4px;
     border-radius: var(--radius) var(--radius) 0 0;
+    transition: height 0.3s ease;
+}
+
+.protocol-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
 }
 
 .protocol-card[data-category="regulacao-eletiva"]::before { background: var(--primary-light); }
@@ -290,9 +320,21 @@ body {
 .protocol-card[data-category="especializado"]::before { background: #e67e22; }
 
 .protocol-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-hover);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.15);
     border-color: transparent;
+}
+
+.protocol-card:hover::before {
+    height: 6px;
+}
+
+.protocol-card:hover::after {
+    opacity: 1;
+}
+
+.protocol-card:active {
+    transform: translateY(-6px) scale(1.01);
 }
 
 .card-header {
@@ -328,12 +370,17 @@ body {
 }
 
 .card-title {
-    font-size: 1rem;
+    font-size: 1.05rem;
     font-weight: 600;
     color: var(--text);
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     line-height: 1.4;
     flex-grow: 1;
+    transition: color 0.3s ease;
+}
+
+.protocol-card:hover .card-title {
+    color: var(--primary);
 }
 
 .card-description {
@@ -372,54 +419,106 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 16px;
+    padding: 10px 18px;
     background: var(--info);
     color: white;
     border: none;
     border-radius: 50px;
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.view-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.view-btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .view-btn:hover {
     background: #2980b9;
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(52,152,219,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(52,152,219,0.4);
+}
+
+.view-btn:active {
+    transform: translateY(0);
 }
 
 .view-btn i {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
 }
 
 .download-btn {
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    padding: 8px 16px;
+    padding: 10px 18px;
     background: var(--accent);
     color: white;
     border: none;
     border-radius: 50px;
-    font-size: 0.82rem;
+    font-size: 0.85rem;
     font-weight: 600;
     cursor: pointer;
-    transition: var(--transition);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-decoration: none;
     font-family: inherit;
+    position: relative;
+    overflow: hidden;
+}
+
+.download-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.download-btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .download-btn:hover {
     background: var(--accent-hover);
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(39,174,96,0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(39,174,96,0.4);
+}
+
+.download-btn:active {
+    transform: translateY(0);
 }
 
 .download-btn i {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    position: relative;
+    z-index: 1;
 }
 
 /* ===== NO RESULTS ===== */
@@ -477,7 +576,7 @@ body {
 @keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(30px);
     }
     to {
         opacity: 1;
@@ -485,12 +584,57 @@ body {
     }
 }
 
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
 .protocol-card {
-    animation: fadeInUp 0.4s ease forwards;
+    animation: fadeInUp 0.5s ease forwards;
+    animation-fill-mode: both;
+}
+
+.filter-btn {
+    animation: slideIn 0.3s ease forwards;
+}
+
+.view-btn:hover i,
+.download-btn:hover i {
+    animation: pulse 0.6s ease infinite;
 }
 
 /* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+    .protocols-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 20px;
+    }
+}
+
 @media (max-width: 768px) {
+    .container {
+        padding: 0 16px;
+    }
+
+    .header {
+        padding: 20px 0;
+    }
+
     .header-content {
         flex-direction: column;
         gap: 16px;
@@ -499,23 +643,69 @@ body {
 
     .logo-section {
         flex-direction: column;
+        gap: 12px;
+    }
+
+    .logo-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 22px;
+    }
+
+    .logo-text h1 {
+        font-size: 1.3rem;
+    }
+
+    .logo-text p {
+        font-size: 0.8rem;
     }
 
     .header-stats {
         gap: 16px;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .stat-item {
+        padding: 8px 16px;
+    }
+
+    .stat-number {
+        font-size: 1.3rem;
+    }
+
+    .search-section {
+        padding: 20px 0 12px;
+    }
+
+    .search-box input {
+        padding: 14px 45px 14px 45px;
+        font-size: 0.95rem;
     }
 
     .protocols-grid {
         grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .protocol-card {
+        padding: 20px;
     }
 
     .filters {
         justify-content: center;
+        gap: 6px;
+    }
+
+    .filter-btn {
+        font-size: 0.78rem;
+        padding: 7px 14px;
     }
 
     .footer-content {
         flex-direction: column;
         text-align: center;
+        gap: 20px;
     }
 
     .footer-note {
@@ -525,40 +715,174 @@ body {
     .info-content {
         flex-direction: column;
         text-align: center;
+        padding: 12px 16px;
+    }
+
+    .info-content i {
+        font-size: 1.1rem;
+    }
+
+    .info-content p {
+        font-size: 0.85rem;
     }
 
     .card-meta {
         flex-direction: column;
         align-items: flex-start;
+        gap: 12px;
     }
 
     .card-actions {
         width: 100%;
+        gap: 10px;
     }
 
     .view-btn,
     .download-btn {
         flex: 1;
         justify-content: center;
+        padding: 10px 16px;
     }
 }
 
 @media (max-width: 480px) {
-    .filter-btn {
+    .header {
+        padding: 16px 0;
+    }
+
+    .logo-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+    }
+
+    .logo-text h1 {
+        font-size: 1.15rem;
+    }
+
+    .logo-text p {
         font-size: 0.75rem;
+    }
+
+    .stat-number {
+        font-size: 1.2rem;
+    }
+
+    .stat-label {
+        font-size: 0.7rem;
+    }
+
+    .search-box input {
+        padding: 12px 40px 12px 40px;
+        font-size: 0.9rem;
+    }
+
+    .search-icon {
+        left: 14px;
+        font-size: 0.9rem;
+    }
+
+    .clear-btn {
+        right: 12px;
+    }
+
+    .filter-btn {
+        font-size: 0.72rem;
         padding: 6px 12px;
     }
 
+    .filter-btn i {
+        font-size: 0.8rem;
+    }
+
+    .protocol-card {
+        padding: 16px;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .card-category {
+        font-size: 0.65rem;
+        padding: 3px 8px;
+    }
+
+    .card-pages {
+        font-size: 0.7rem;
+    }
+
     .card-title {
-        font-size: 0.92rem;
+        font-size: 0.95rem;
+    }
+
+    .card-description {
+        font-size: 0.8rem;
+    }
+
+    .card-date {
+        font-size: 0.75rem;
     }
 
     .card-actions {
         flex-direction: column;
+        gap: 8px;
     }
 
     .view-btn,
     .download-btn {
         width: 100%;
+        padding: 10px 14px;
+        font-size: 0.82rem;
+    }
+
+    .footer {
+        padding: 24px 0;
+    }
+
+    .footer-info p {
+        font-size: 0.8rem;
+    }
+
+    .footer-note p {
+        font-size: 0.75rem;
+    }
+
+    .results-info {
+        font-size: 0.85rem;
+    }
+
+    .no-results i {
+        font-size: 2.5rem;
+    }
+
+    .no-results h3 {
+        font-size: 1.1rem;
+    }
+
+    .no-results p {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        padding: 0 12px;
+    }
+
+    .protocol-card {
+        padding: 14px;
+    }
+
+    .card-title {
+        font-size: 0.9rem;
+    }
+
+    .view-btn,
+    .download-btn {
+        font-size: 0.78rem;
+        padding: 9px 12px;
     }
 }
