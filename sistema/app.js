@@ -1,11 +1,9 @@
-// ===== Utility: get absolute path for download =====
+// ===== Utility: get download path for PDF =====
 function getDownloadPath(filename) {
-    // Get the base URL (root of the site)
-    const baseUrl = window.location.origin;
     // Encode the filename properly
     const encodedFilename = encodeURIComponent(filename);
-    // Return absolute URL to the PDF in root directory
-    return `${baseUrl}/${encodedFilename}`;
+    // PDFs are in root, so just use the filename
+    return encodedFilename;
 }
 
 // ===== DOM Elements =====

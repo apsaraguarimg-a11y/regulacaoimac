@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protocolos e Fluxos — SMS Araguari</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="sistema/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-hospital-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>Protocolos e Fluxos</h1>
+                    <p>Secretaria Municipal de Saúde — Araguari/MG</p>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalProtocolos">39</span>
+                    <span class="stat-label">Protocolos</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">6</span>
+                    <span class="stat-label">Categorias</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Search and Filters -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" placeholder="Buscar protocolo por nome, categoria ou palavra-chave..." autocomplete="off">
+                <button class="clear-btn" id="clearSearch" title="Limpar busca">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="filters">
+                <button class="filter-btn active" data-filter="todos">
+                    <i class="fas fa-th-large"></i> Todos
+                </button>
+                <button class="filter-btn" data-filter="regulacao-eletiva">
+                    <i class="fas fa-clipboard-check"></i> Regulação Eletiva
+                </button>
+                <button class="filter-btn" data-filter="urgencia">
+                    <i class="fas fa-ambulance"></i> Urgência
+                </button>
+                <button class="filter-btn" data-filter="fluxo-assistencial">
+                    <i class="fas fa-project-diagram"></i> Fluxos Assistenciais
+                </button>
+                <button class="filter-btn" data-filter="clinico-nutricional">
+                    <i class="fas fa-heartbeat"></i> Clínicos e Nutricionais
+                </button>
+                <button class="filter-btn" data-filter="manual">
+                    <i class="fas fa-book"></i> Manuais
+                </button>
+                <button class="filter-btn" data-filter="especializado">
+                    <i class="fas fa-brain"></i> Especializados
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Info Banner -->
+    <section class="info-banner">
+        <div class="container">
+            <div class="info-content">
+                <i class="fas fa-info-circle"></i>
+                <p><strong>Como usar:</strong> Navegue pelas categorias ou use a busca para encontrar o protocolo desejado. Clique em <strong>"Baixar PDF"</strong> para fazer o download do documento completo.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Protocols Grid -->
+    <main class="main-content">
+        <div class="container">
+            <div class="results-info">
+                <span id="resultsCount">Exibindo 39 protocolos</span>
+            </div>
+            <div class="protocols-grid" id="protocolsGrid">
+                <!-- Cards will be injected by JS -->
+            </div>
+            <div class="no-results" id="noResults" style="display:none;">
+                <i class="fas fa-search"></i>
+                <h3>Nenhum protocolo encontrado</h3>
+                <p>Tente buscar com outros termos ou limpe os filtros.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-info">
+                    <p><strong>Prefeitura Municipal de Araguari</strong></p>
+                    <p>Secretaria Municipal de Saúde — Central de Regulação Eletiva</p>
+                    <p>Rua Dr. Afrânio, 161, Centro — CEP 38440-072 — Araguari/MG</p>
+                    <p>Telefone: (34) 3020-0308 / 3020-0309 | E-mail: tfd@araguari.mg.gov.br</p>
+                </div>
+                <div class="footer-note">
+                    <p>Sistema desenvolvido para consulta e download dos protocolos validados.</p>
+                    <p>Desenvolvido por @Alexandre</p>
+                    <p>Última atualização: Maio/2026</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="sistema/protocolos-data.js"></script>
+    <script src="sistema/app.js"></script>
+</body>
+</html>
