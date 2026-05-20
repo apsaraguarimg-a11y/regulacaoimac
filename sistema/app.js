@@ -1,9 +1,11 @@
-// ===== Utility: encode file path for download =====
-function encodeFilePath(path) {
-    // Add ../ prefix to go up one directory from /sistema to root
-    // Then encode each segment properly for browser download
-    const fullPath = '../' + path;
-    return fullPath.split('/').map(segment => encodeURIComponent(segment)).join('/');
+// ===== Utility: get absolute path for download =====
+function getDownloadPath(filename) {
+    // Get the base URL (root of the site)
+    const baseUrl = window.location.origin;
+    // Encode the filename properly
+    const encodedFilename = encodeURIComponent(filename);
+    // Return absolute URL to the PDF in root directory
+    return `${baseUrl}/${encodedFilename}`;
 }
 
 // ===== DOM Elements =====
@@ -39,7 +41,7 @@ function renderCards(data) {
             <p class="card-description">${p.descricao}</p>
             <div class="card-meta">
                 <span class="card-date"><i class="far fa-calendar-alt"></i> ${p.data}</span>
-                <a href="${encodeFilePath(p.arquivo)}" download class="download-btn" title="Baixar PDF">
+                <a href="${getDownloadPath(p.arquivo)}" download class="download-btn" title="Baixar PDF">
                     <i class="fas fa-download"></i> Baixar PDF
                 </a>
             </div>
