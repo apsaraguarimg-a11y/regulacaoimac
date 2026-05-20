@@ -8,7 +8,7 @@ Sistema web para consulta e download de protocolos clínicos, fluxos assistencia
 
 ## ✨ Funcionalidades
 
-- 📋 **39 Protocolos** organizados por categoria
+- 📋 **38 Protocolos** organizados por categoria
 - 🔍 **Busca inteligente** por nome, categoria ou palavra-chave
 - 🏷️ **6 Categorias**: Regulação Eletiva, Urgência, Fluxos Assistenciais, Clínicos/Nutricionais, Manuais, Especializados
 - 👁️ **Visualização online** de PDFs
@@ -118,7 +118,7 @@ GET    /api/download/excel           # Download do Excel completo
 2. **Urgência** (5 protocolos)
 3. **Fluxos Assistenciais** (9 protocolos)
 4. **Clínicos e Nutricionais** (4 protocolos)
-5. **Manuais** (3 protocolos)
+5. **Manuais** (2 protocolos)
 6. **Especializados** (2 protocolos)
 
 ## 📞 Contato

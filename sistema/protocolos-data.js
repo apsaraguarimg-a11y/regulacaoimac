@@ -415,21 +415,10 @@ const protocolos = [
         arquivo: "Manual de preenchimento - TFD.pdf",
         palavrasChave: ["TFD", "tratamento fora domicílio", "manual", "encaminhamento", "UFU"]
     },
-    {
-        id: 38,
-        titulo: "Formulário Padrão de Solicitação de Procedimentos",
-        descricao: "Formulário padrão da SMS para solicitação de procedimentos, com dados do paciente, histórico e autorização.",
-        categoria: "manual",
-        categoriaLabel: "Manual",
-        data: "2024",
-        paginas: 2,
-        arquivo: "CR_FORMULÁRIO PADRÃO PARA SOLICITAÇÃO DE PROCEDIMENTOS SMS 2024.pdf",
-        palavrasChave: ["formulário", "solicitação", "procedimento", "padrão", "SMS"]
-    },
 
     // ===== ESPECIALIZADOS =====
     {
-        id: 39,
+        id: 38,
         titulo: "Terapia ABA — Encaminhamento para TEA",
         descricao: "Protocolo de encaminhamento para Terapia ABA (Análise do Comportamento Aplicada) para pacientes com Transtorno do Espectro Autista.",
         categoria: "especializado",
