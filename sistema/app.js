@@ -9,17 +9,20 @@ function getDownloadPath(filename) {
     return encodedFilename;
 }
 
-// ===== Statistics Management (Server-based) =====
+// ===== Statistics Management (Server-based with localStorage fallback) =====
 async function fetchStats() {
     try {
-        const response = await fetch(`${API_URL}/stats`);
+        const response = await fetch(`${API_URL}/stats`, { 
+            signal: AbortSignal.timeout(3000) 
+        });
         if (response.ok) {
             return await response.json();
         }
     } catch (error) {
-        console.error('Erro ao buscar estatísticas:', error);
+        console.warn('API não disponível, usando localStorage:', error.message);
     }
-    return {};
+    // Fallback para localStorage
+    return getLocalStats();
 }
 
 async function incrementView(protocolId, protocolName, protocolCategory) {
@@ -30,17 +33,22 @@ async function incrementView(protocolId, protocolName, protocolCategory) {
             body: JSON.stringify({ 
                 nome: protocolName,
                 categoria: protocolCategory
-            })
+            }),
+            signal: AbortSignal.timeout(3000)
         });
         
         if (response.ok) {
             const stats = await response.json();
             updateStatsDisplay(protocolId, stats);
             updateGlobalStats();
+            return;
         }
     } catch (error) {
-        console.error('Erro ao incrementar visualização:', error);
+        console.warn('API não disponível, usando localStorage:', error.message);
     }
+    
+    // Fallback para localStorage
+    incrementViewLocal(protocolId);
 }
 
 async function incrementDownload(protocolId, protocolName, protocolCategory) {
@@ -51,29 +59,74 @@ async function incrementDownload(protocolId, protocolName, protocolCategory) {
             body: JSON.stringify({ 
                 nome: protocolName,
                 categoria: protocolCategory
-            })
+            }),
+            signal: AbortSignal.timeout(3000)
         });
         
         if (response.ok) {
             const stats = await response.json();
             updateStatsDisplay(protocolId, stats);
             updateGlobalStats();
+            return;
         }
     } catch (error) {
-        console.error('Erro ao incrementar download:', error);
+        console.warn('API não disponível, usando localStorage:', error.message);
     }
+    
+    // Fallback para localStorage
+    incrementDownloadLocal(protocolId);
 }
 
 async function getProtocolStats(protocolId) {
     try {
-        const response = await fetch(`${API_URL}/stats/${protocolId}`);
+        const response = await fetch(`${API_URL}/stats/${protocolId}`, {
+            signal: AbortSignal.timeout(3000)
+        });
         if (response.ok) {
             return await response.json();
         }
     } catch (error) {
-        console.error('Erro ao obter estatísticas do protocolo:', error);
+        console.warn('API não disponível, usando localStorage');
     }
-    return { views: 0, downloads: 0 };
+    // Fallback para localStorage
+    const stats = getLocalStats();
+    return stats[protocolId] || { views: 0, downloads: 0 };
+}
+
+// ===== LocalStorage Fallback Functions =====
+function getLocalStats() {
+    const stats = localStorage.getItem('protocolStats');
+    return stats ? JSON.parse(stats) : {};
+}
+
+function saveLocalStats(stats) {
+    localStorage.setItem('protocolStats', JSON.stringify(stats));
+}
+
+function incrementViewLocal(protocolId) {
+    const stats = getLocalStats();
+    if (!stats[protocolId]) {
+        stats[protocolId] = { views: 0, downloads: 0 };
+    }
+    stats[protocolId].views++;
+    saveLocalStats(stats);
+    
+    const localStats = stats[protocolId];
+    updateStatsDisplay(protocolId, localStats);
+    updateGlobalStats();
+}
+
+function incrementDownloadLocal(protocolId) {
+    const stats = getLocalStats();
+    if (!stats[protocolId]) {
+        stats[protocolId] = { views: 0, downloads: 0 };
+    }
+    stats[protocolId].downloads++;
+    saveLocalStats(stats);
+    
+    const localStats = stats[protocolId];
+    updateStatsDisplay(protocolId, localStats);
+    updateGlobalStats();
 }
 
 function updateStatsDisplay(protocolId, stats) {
@@ -266,7 +319,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ===== Update Global Stats =====
 async function updateGlobalStats() {
     try {
-        const response = await fetch(`${API_URL}/stats/global/totals`);
+        const response = await fetch(`${API_URL}/stats/global/totals`, {
+            signal: AbortSignal.timeout(3000)
+        });
         if (response.ok) {
             const data = await response.json();
             
@@ -275,8 +330,25 @@ async function updateGlobalStats() {
             
             if (viewsElement) viewsElement.textContent = formatNumber(data.totalViews);
             if (downloadsElement) downloadsElement.textContent = formatNumber(data.totalDownloads);
+            return;
         }
     } catch (error) {
-        console.error('Erro ao atualizar estatísticas globais:', error);
+        console.warn('API não disponível, calculando totais localmente');
     }
+    
+    // Fallback para localStorage
+    const stats = getLocalStats();
+    let totalViews = 0;
+    let totalDownloads = 0;
+    
+    Object.values(stats).forEach(stat => {
+        totalViews += stat.views || 0;
+        totalDownloads += stat.downloads || 0;
+    });
+    
+    const viewsElement = document.getElementById('totalViews');
+    const downloadsElement = document.getElementById('totalDownloads');
+    
+    if (viewsElement) viewsElement.textContent = formatNumber(totalViews);
+    if (downloadsElement) downloadsElement.textContent = formatNumber(totalDownloads);
 }
