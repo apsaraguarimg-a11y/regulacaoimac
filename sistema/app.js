@@ -6,6 +6,60 @@ function getDownloadPath(filename) {
     return encodedFilename;
 }
 
+// ===== Statistics Management =====
+function getStats() {
+    const stats = localStorage.getItem('protocolStats');
+    return stats ? JSON.parse(stats) : {};
+}
+
+function saveStats(stats) {
+    localStorage.setItem('protocolStats', JSON.stringify(stats));
+}
+
+function incrementView(protocolId) {
+    const stats = getStats();
+    if (!stats[protocolId]) {
+        stats[protocolId] = { views: 0, downloads: 0 };
+    }
+    stats[protocolId].views++;
+    saveStats(stats);
+    updateStatsDisplay(protocolId);
+}
+
+function incrementDownload(protocolId) {
+    const stats = getStats();
+    if (!stats[protocolId]) {
+        stats[protocolId] = { views: 0, downloads: 0 };
+    }
+    stats[protocolId].downloads++;
+    saveStats(stats);
+    updateStatsDisplay(protocolId);
+}
+
+function getProtocolStats(protocolId) {
+    const stats = getStats();
+    return stats[protocolId] || { views: 0, downloads: 0 };
+}
+
+function updateStatsDisplay(protocolId) {
+    const stats = getProtocolStats(protocolId);
+    const viewElement = document.querySelector(`[data-protocol-id="${protocolId}"] .view-count`);
+    const downloadElement = document.querySelector(`[data-protocol-id="${protocolId}"] .download-count`);
+    
+    if (viewElement) viewElement.textContent = formatNumber(stats.views);
+    if (downloadElement) downloadElement.textContent = formatNumber(stats.downloads);
+    
+    // Update global stats
+    updateGlobalStats();
+}
+
+function formatNumber(num) {
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1) + 'k';
+    }
+    return num;
+}
+
 // ===== DOM Elements =====
 const searchInput = document.getElementById('searchInput');
 const clearSearch = document.getElementById('clearSearch');
@@ -29,27 +83,64 @@ function renderCards(data) {
     noResults.style.display = 'none';
     resultsCount.textContent = `Exibindo ${data.length} protocolo${data.length > 1 ? 's' : ''}`;
 
-    protocolsGrid.innerHTML = data.map((p, index) => `
-        <div class="protocol-card" data-category="${p.categoria}" style="animation-delay: ${index * 0.05}s">
+    protocolsGrid.innerHTML = data.map((p, index) => {
+        const stats = getProtocolStats(p.id);
+        return `
+        <div class="protocol-card" data-category="${p.categoria}" data-protocol-id="${p.id}" style="animation-delay: ${index * 0.05}s">
             <div class="card-header">
                 <span class="card-category ${p.categoria}">${p.categoriaLabel}</span>
                 <span class="card-pages"><i class="fas fa-file-pdf"></i> ${p.paginas} pág.</span>
             </div>
             <h3 class="card-title">${p.titulo}</h3>
             <p class="card-description">${p.descricao}</p>
+            <div class="card-stats">
+                <div class="stat-item">
+                    <i class="fas fa-eye"></i>
+                    <span class="stat-label">Visualizações:</span>
+                    <span class="stat-value view-count">${formatNumber(stats.views)}</span>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-download"></i>
+                    <span class="stat-label">Downloads:</span>
+                    <span class="stat-value download-count">${formatNumber(stats.downloads)}</span>
+                </div>
+            </div>
             <div class="card-meta">
                 <span class="card-date"><i class="far fa-calendar-alt"></i> ${p.data}</span>
                 <div class="card-actions">
-                    <a href="${getDownloadPath(p.arquivo)}" target="_blank" class="view-btn" title="Visualizar PDF">
+                    <a href="${getDownloadPath(p.arquivo)}" target="_blank" class="view-btn" title="Visualizar PDF" data-protocol-id="${p.id}">
                         <i class="fas fa-eye"></i> Visualizar
                     </a>
-                    <a href="${getDownloadPath(p.arquivo)}" download class="download-btn" title="Baixar PDF">
+                    <a href="${getDownloadPath(p.arquivo)}" download class="download-btn" title="Baixar PDF" data-protocol-id="${p.id}">
                         <i class="fas fa-download"></i> Baixar
                     </a>
                 </div>
             </div>
         </div>
-    `).join('');
+    `;
+    }).join('');
+
+    // Add event listeners for stats tracking
+    attachStatsListeners();
+}
+
+// ===== Attach Stats Listeners =====
+function attachStatsListeners() {
+    // Track view button clicks
+    document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const protocolId = parseInt(this.getAttribute('data-protocol-id'));
+            incrementView(protocolId);
+        });
+    });
+
+    // Track download button clicks
+    document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const protocolId = parseInt(this.getAttribute('data-protocol-id'));
+            incrementDownload(protocolId);
+        });
+    });
 }
 
 // ===== Filter Logic =====
@@ -127,4 +218,26 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Update total count in header
     document.getElementById('totalProtocolos').textContent = protocolos.length;
+    
+    // Calculate and display total stats
+    updateGlobalStats();
 });
+
+// ===== Update Global Stats =====
+function updateGlobalStats() {
+    const stats = getStats();
+    let totalViews = 0;
+    let totalDownloads = 0;
+    
+    Object.values(stats).forEach(stat => {
+        totalViews += stat.views || 0;
+        totalDownloads += stat.downloads || 0;
+    });
+    
+    // Update header if elements exist
+    const viewsElement = document.getElementById('totalViews');
+    const downloadsElement = document.getElementById('totalDownloads');
+    
+    if (viewsElement) viewsElement.textContent = formatNumber(totalViews);
+    if (downloadsElement) downloadsElement.textContent = formatNumber(totalDownloads);
+}
