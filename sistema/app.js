@@ -39,9 +39,14 @@ function renderCards(data) {
             <p class="card-description">${p.descricao}</p>
             <div class="card-meta">
                 <span class="card-date"><i class="far fa-calendar-alt"></i> ${p.data}</span>
-                <a href="${getDownloadPath(p.arquivo)}" download class="download-btn" title="Baixar PDF">
-                    <i class="fas fa-download"></i> Baixar PDF
-                </a>
+                <div class="card-actions">
+                    <a href="${getDownloadPath(p.arquivo)}" target="_blank" class="view-btn" title="Visualizar PDF">
+                        <i class="fas fa-eye"></i> Visualizar
+                    </a>
+                    <a href="${getDownloadPath(p.arquivo)}" download class="download-btn" title="Baixar PDF">
+                        <i class="fas fa-download"></i> Baixar
+                    </a>
+                </div>
             </div>
         </div>
     `).join('');

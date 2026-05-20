@@ -350,6 +350,8 @@ body {
     padding-top: 14px;
     border-top: 1px solid var(--border);
     margin-top: auto;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .card-date {
@@ -358,6 +360,39 @@ body {
     display: flex;
     align-items: center;
     gap: 5px;
+}
+
+.card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: var(--info);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    text-decoration: none;
+    font-family: inherit;
+}
+
+.view-btn:hover {
+    background: #2980b9;
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(52,152,219,0.3);
+}
+
+.view-btn i {
+    font-size: 0.85rem;
 }
 
 .download-btn {
@@ -491,6 +526,21 @@ body {
         flex-direction: column;
         text-align: center;
     }
+
+    .card-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .card-actions {
+        width: 100%;
+    }
+
+    .view-btn,
+    .download-btn {
+        flex: 1;
+        justify-content: center;
+    }
 }
 
 @media (max-width: 480px) {
@@ -501,5 +551,14 @@ body {
 
     .card-title {
         font-size: 0.92rem;
+    }
+
+    .card-actions {
+        flex-direction: column;
+    }
+
+    .view-btn,
+    .download-btn {
+        width: 100%;
     }
 }
