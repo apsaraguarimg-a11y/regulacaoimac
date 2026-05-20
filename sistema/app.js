@@ -22,11 +22,15 @@ async function fetchStats() {
     return {};
 }
 
-async function incrementView(protocolId) {
+async function incrementView(protocolId, protocolName, protocolCategory) {
     try {
         const response = await fetch(`${API_URL}/stats/${protocolId}/view`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                nome: protocolName,
+                categoria: protocolCategory
+            })
         });
         
         if (response.ok) {
@@ -39,11 +43,15 @@ async function incrementView(protocolId) {
     }
 }
 
-async function incrementDownload(protocolId) {
+async function incrementDownload(protocolId, protocolName, protocolCategory) {
     try {
         const response = await fetch(`${API_URL}/stats/${protocolId}/download`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                nome: protocolName,
+                categoria: protocolCategory
+            })
         });
         
         if (response.ok) {
@@ -134,10 +142,12 @@ async function renderCards(data) {
             <div class="card-meta">
                 <span class="card-date"><i class="far fa-calendar-alt"></i> ${p.data}</span>
                 <div class="card-actions">
-                    <a href="${getDownloadPath(p.arquivo)}" target="_blank" class="view-btn" title="Visualizar PDF" data-protocol-id="${p.id}">
+                    <a href="${getDownloadPath(p.arquivo)}" target="_blank" class="view-btn" title="Visualizar PDF" 
+                       data-protocol-id="${p.id}" data-protocol-name="${p.titulo}" data-protocol-category="${p.categoriaLabel}">
                         <i class="fas fa-eye"></i> Visualizar
                     </a>
-                    <a href="${getDownloadPath(p.arquivo)}" download class="download-btn" title="Baixar PDF" data-protocol-id="${p.id}">
+                    <a href="${getDownloadPath(p.arquivo)}" download class="download-btn" title="Baixar PDF" 
+                       data-protocol-id="${p.id}" data-protocol-name="${p.titulo}" data-protocol-category="${p.categoriaLabel}">
                         <i class="fas fa-download"></i> Baixar
                     </a>
                 </div>
@@ -156,7 +166,9 @@ function attachStatsListeners() {
     document.querySelectorAll('.view-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             const protocolId = parseInt(this.getAttribute('data-protocol-id'));
-            incrementView(protocolId);
+            const protocolName = this.getAttribute('data-protocol-name');
+            const protocolCategory = this.getAttribute('data-protocol-category');
+            incrementView(protocolId, protocolName, protocolCategory);
         });
     });
 
@@ -164,7 +176,9 @@ function attachStatsListeners() {
     document.querySelectorAll('.download-btn').forEach(btn => {
         btn.addEventListener('click', function(e) {
             const protocolId = parseInt(this.getAttribute('data-protocol-id'));
-            incrementDownload(protocolId);
+            const protocolName = this.getAttribute('data-protocol-name');
+            const protocolCategory = this.getAttribute('data-protocol-category');
+            incrementDownload(protocolId, protocolName, protocolCategory);
         });
     });
 }
