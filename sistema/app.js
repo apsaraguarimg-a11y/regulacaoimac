@@ -1,3 +1,6 @@
+// ===== Configuration =====
+const API_URL = CONFIG.API_URL;
+
 // ===== Utility: get download path for PDF =====
 function getDownloadPath(filename) {
     // Encode the filename properly
@@ -6,51 +9,71 @@ function getDownloadPath(filename) {
     return encodedFilename;
 }
 
-// ===== Statistics Management =====
-function getStats() {
-    const stats = localStorage.getItem('protocolStats');
-    return stats ? JSON.parse(stats) : {};
-}
-
-function saveStats(stats) {
-    localStorage.setItem('protocolStats', JSON.stringify(stats));
-}
-
-function incrementView(protocolId) {
-    const stats = getStats();
-    if (!stats[protocolId]) {
-        stats[protocolId] = { views: 0, downloads: 0 };
+// ===== Statistics Management (Server-based) =====
+async function fetchStats() {
+    try {
+        const response = await fetch(`${API_URL}/stats`);
+        if (response.ok) {
+            return await response.json();
+        }
+    } catch (error) {
+        console.error('Erro ao buscar estatísticas:', error);
     }
-    stats[protocolId].views++;
-    saveStats(stats);
-    updateStatsDisplay(protocolId);
+    return {};
 }
 
-function incrementDownload(protocolId) {
-    const stats = getStats();
-    if (!stats[protocolId]) {
-        stats[protocolId] = { views: 0, downloads: 0 };
+async function incrementView(protocolId) {
+    try {
+        const response = await fetch(`${API_URL}/stats/${protocolId}/view`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+            const stats = await response.json();
+            updateStatsDisplay(protocolId, stats);
+            updateGlobalStats();
+        }
+    } catch (error) {
+        console.error('Erro ao incrementar visualização:', error);
     }
-    stats[protocolId].downloads++;
-    saveStats(stats);
-    updateStatsDisplay(protocolId);
 }
 
-function getProtocolStats(protocolId) {
-    const stats = getStats();
-    return stats[protocolId] || { views: 0, downloads: 0 };
+async function incrementDownload(protocolId) {
+    try {
+        const response = await fetch(`${API_URL}/stats/${protocolId}/download`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        if (response.ok) {
+            const stats = await response.json();
+            updateStatsDisplay(protocolId, stats);
+            updateGlobalStats();
+        }
+    } catch (error) {
+        console.error('Erro ao incrementar download:', error);
+    }
 }
 
-function updateStatsDisplay(protocolId) {
-    const stats = getProtocolStats(protocolId);
+async function getProtocolStats(protocolId) {
+    try {
+        const response = await fetch(`${API_URL}/stats/${protocolId}`);
+        if (response.ok) {
+            return await response.json();
+        }
+    } catch (error) {
+        console.error('Erro ao obter estatísticas do protocolo:', error);
+    }
+    return { views: 0, downloads: 0 };
+}
+
+function updateStatsDisplay(protocolId, stats) {
     const viewElement = document.querySelector(`[data-protocol-id="${protocolId}"] .view-count`);
     const downloadElement = document.querySelector(`[data-protocol-id="${protocolId}"] .download-count`);
     
     if (viewElement) viewElement.textContent = formatNumber(stats.views);
     if (downloadElement) downloadElement.textContent = formatNumber(stats.downloads);
-    
-    // Update global stats
-    updateGlobalStats();
 }
 
 function formatNumber(num) {
@@ -71,7 +94,7 @@ const filterBtns = document.querySelectorAll('.filter-btn');
 let activeFilter = 'todos';
 
 // ===== Render Cards =====
-function renderCards(data) {
+async function renderCards(data) {
     if (data.length === 0) {
         protocolsGrid.style.display = 'none';
         noResults.style.display = 'block';
@@ -83,8 +106,11 @@ function renderCards(data) {
     noResults.style.display = 'none';
     resultsCount.textContent = `Exibindo ${data.length} protocolo${data.length > 1 ? 's' : ''}`;
 
+    // Buscar estatísticas do servidor
+    const allStats = await fetchStats();
+
     protocolsGrid.innerHTML = data.map((p, index) => {
-        const stats = getProtocolStats(p.id);
+        const stats = allStats[p.id] || { views: 0, downloads: 0 };
         return `
         <div class="protocol-card" data-category="${p.categoria}" data-protocol-id="${p.id}" style="animation-delay: ${index * 0.05}s">
             <div class="card-header">
@@ -224,20 +250,19 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ===== Update Global Stats =====
-function updateGlobalStats() {
-    const stats = getStats();
-    let totalViews = 0;
-    let totalDownloads = 0;
-    
-    Object.values(stats).forEach(stat => {
-        totalViews += stat.views || 0;
-        totalDownloads += stat.downloads || 0;
-    });
-    
-    // Update header if elements exist
-    const viewsElement = document.getElementById('totalViews');
-    const downloadsElement = document.getElementById('totalDownloads');
-    
-    if (viewsElement) viewsElement.textContent = formatNumber(totalViews);
-    if (downloadsElement) downloadsElement.textContent = formatNumber(totalDownloads);
+async function updateGlobalStats() {
+    try {
+        const response = await fetch(`${API_URL}/stats/global/totals`);
+        if (response.ok) {
+            const data = await response.json();
+            
+            const viewsElement = document.getElementById('totalViews');
+            const downloadsElement = document.getElementById('totalDownloads');
+            
+            if (viewsElement) viewsElement.textContent = formatNumber(data.totalViews);
+            if (downloadsElement) downloadsElement.textContent = formatNumber(data.totalDownloads);
+        }
+    } catch (error) {
+        console.error('Erro ao atualizar estatísticas globais:', error);
+    }
 }
