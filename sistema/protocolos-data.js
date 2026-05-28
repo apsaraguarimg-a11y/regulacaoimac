@@ -427,5 +427,16 @@ const protocolos = [
         paginas: 6,
         arquivo: "PROTOCOLO_DE_ENCAMINHAMENTO_PARA_TERAPIA_ABA_-assinado.pdf",
         palavrasChave: ["ABA", "autismo", "TEA", "comportamento", "neuropediatria", "reabilitação"]
+    },
+    {
+        id: 39,
+        titulo: "Gestão da Fila ABA — Readequação SIRO",
+        descricao: "Proposta de readequação do sistema de gestão da fila ABA para pacientes neurodivergentes, adotando modelo SIRO com distribuição proporcional entre classificações de prioridade (50% vermelhos, 40% amarelos, 10% verdes/azuis).",
+        categoria: "regulacao-eletiva",
+        categoriaLabel: "Regulação Eletiva",
+        data: "20/05/2026",
+        paginas: 2,
+        arquivo: "JUNTA REGULADORA – ARAGUARI-MG (2).pdf",
+        palavrasChave: ["ABA", "fila", "SIRO", "neurodivergente", "autismo", "TEA", "prioridade", "regulação", "junta reguladora"]
     }
 ];
