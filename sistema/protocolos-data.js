@@ -429,6 +429,17 @@ const protocolos = [
         palavrasChave: ["ABA", "autismo", "TEA", "comportamento", "neuropediatria", "reabilitação"]
     },
     {
+        id: 40,
+        titulo: "PROAM-SUS — Amostragem e Controle do Faturamento Laboratorial",
+        descricao: "Procedimento operacional de amostragem estatística para conferência do faturamento de procedimentos laboratoriais do SUS, com estratificação por valor faturado, sorteio aleatório e registro de divergências.",
+        categoria: "manual",
+        categoriaLabel: "Manual",
+        data: "15/10/2026",
+        paginas: 17,
+        arquivo: "PROAM_OFICIAL_assinado.pdf",
+        palavrasChave: ["PROAM", "faturamento", "laboratorial", "amostragem", "auditoria", "SUS", "conferência", "estatística", "TCU"]
+    },
+    {
         id: 39,
         titulo: "Gestão da Fila ABA — Readequação SIRO",
         descricao: "Proposta de readequação do sistema de gestão da fila ABA para pacientes neurodivergentes, adotando modelo SIRO com distribuição proporcional entre classificações de prioridade (50% vermelhos, 40% amarelos, 10% verdes/azuis).",
